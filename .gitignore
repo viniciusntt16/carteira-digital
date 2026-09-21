@@ -1,0 +1,42 @@
+# Java - arquivos compilados
+*.class
+
+# Maven - saída de build
+target/
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.temp
+*.swp
+*~
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.ipr
+*.iws
+out/
+
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+bin/
+
+# Visual Studio Code
+.vscode/
+
+# Sistema operacional - macOS
+.DS_Store
+
+# Sistema operacional - Windows
+Thumbs.db
+Desktop.ini
+
+# Arquivos de ambiente/local
+.env
+.env.*
