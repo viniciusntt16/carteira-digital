@@ -13,7 +13,7 @@ class ContasIguaisTeste {
     @Test
     public void deveRetornarContasIguais(){
         Cliente c1 = new Cliente(UUID.randomUUID(),"Vinicius",new CPF("12345678910"));
-        Cliente c2 = new Cliente(UUID.randomUUID(), "Peres", new CPF("12345678910"));
+        Cliente c2 = new Cliente(UUID.randomUUID(), "Peres", new CPF("12345678911"));
 
         Conta conta1 = new Conta(
                 1, c1, 1000

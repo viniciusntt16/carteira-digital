@@ -23,13 +23,11 @@ public class Main {
                 500,
                 LocalDateTime.now(),
                 conta1);
-        t1.saque();
         Transacao t2 = new Transacao(UUID.randomUUID(),
                 TIPO.TRANSFERENCIA,
                 1500,
                 LocalDateTime.now(),
                 conta2, conta1);
-        t2.transferencia();
         System.out.println(conta1.getTransacoes());
         System.out.println(conta1.getTransacoes());
     }

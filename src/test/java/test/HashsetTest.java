@@ -26,7 +26,7 @@ public class HashsetTest {
     @Test
     void naoAceitarAMesmoContaNohashset(){
         Cliente c1 = new Cliente(UUID.randomUUID(),"Vinicius",new CPF("12345678910"));
-        Cliente c2 = new Cliente(UUID.randomUUID(), "Peres", new CPF("12345678910"));
+        Cliente c2 = new Cliente(UUID.randomUUID(), "Peres", new CPF("12345678911"));
 
         Set<Conta> contas = new HashSet<>();
         contas.add(new Conta(1, c1, 1000));
