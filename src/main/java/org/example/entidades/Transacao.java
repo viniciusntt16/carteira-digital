@@ -32,30 +32,5 @@ public class Transacao {
         this.contaDestino = contaDestino;
     }
 
-    public void saque(){
-        if(valor > contaOrigem.saldo){
-            throw new IllegalArgumentException(
-                    "O valor do saque não pode ser maior que o saldo");
-        }
-        contaOrigem.registrarTransacao("Saque no valor de " + valor + " realizado\n");
-    }
 
-    public void transferencia(){
-        if(valor <= 0){
-            throw new IllegalArgumentException(
-                    "O valor da transferência deve ser maior que 0"
-            );
-        }
-        if(valor > contaOrigem.saldo){
-            throw new IllegalArgumentException(
-                    "O valor da transferência deve ser menor que o saldo"
-            );
-        }
-        contaOrigem.registrarTransacao("Valor de " + valor + " enviado\n");
-        contaDestino.registrarTransacao("Valor de " + valor + " recebido\n");
-    }
-
-    public void deposito(){
-        contaOrigem.registrarTransacao("Deposito de " + valor + "realizado\n");
-    }
 }

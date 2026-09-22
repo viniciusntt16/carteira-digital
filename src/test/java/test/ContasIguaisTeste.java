@@ -19,7 +19,7 @@ class ContasIguaisTeste {
                 1, c1, 1000
         );
         Conta conta2 = new Conta(
-                1, c1, 1500
+                1, c2, 1500
         );
         assertEquals(conta1, conta2);
     }

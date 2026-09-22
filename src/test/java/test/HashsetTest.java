@@ -30,7 +30,7 @@ public class HashsetTest {
 
         Set<Conta> contas = new HashSet<>();
         contas.add(new Conta(1, c1, 1000));
-        contas.add(new Conta(1, c1, 1500));
+        contas.add(new Conta(1, c2, 1500));
 
         int tamanhoEsperadoDoSet = contas.size();
         assertEquals(1, tamanhoEsperadoDoSet);
