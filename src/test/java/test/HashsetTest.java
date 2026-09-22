@@ -1,0 +1,25 @@
+package test;
+
+import org.example.entidades.Cliente;
+import org.example.objetos.CPF;
+import org.junit.jupiter.api.Test;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class HashsetTest {
+    @Test
+    void naoAceitarOMesmoClientNohashset(){
+        Set<Cliente> clientes = new HashSet<>();
+        clientes.add(new Cliente(UUID.randomUUID(),
+                "Vinicius", new CPF("12345678910")));
+        clientes.add(new Cliente(UUID.randomUUID(),
+                "Vinicius Aguiar", new CPF("12345678910")));
+
+        int tamanhoEsperadoDoSet = clientes.size();
+        assertEquals(1, tamanhoEsperadoDoSet);
+    }
+}
