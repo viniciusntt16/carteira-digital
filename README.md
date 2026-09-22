@@ -1,1 +1,1 @@
-Repositório carteira-digital
+Esse é um projeto em java para a construção de uma carteira digital, contendo um cliente, uma conta e Transação
