@@ -8,7 +8,7 @@ public class CpfInvalidoTeste {
     @Test
     void cpfInvalido(){
         assertThrows(IllegalArgumentException.class, () -> {
-            new CPF("1234567891");
+            new CPF("abababababa");
         });
     }
 }

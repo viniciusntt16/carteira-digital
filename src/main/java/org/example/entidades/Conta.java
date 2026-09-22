@@ -20,13 +20,13 @@ public class Conta {
     @Override
     public boolean equals(Object obj){
         if(this == obj) return true;
-        if(!(obj instanceof Conta outra))return false;
-        return cliente.equals(outra.cliente);
+        if(!(obj instanceof Conta outra)) return false;
+        return numero == outra.numero;
     }
 
     @Override
     public int hashCode(){
-        return cliente.hashCode();
+        return Integer.hashCode(numero);
     }
 
     public double getSaldo() {

@@ -10,6 +10,6 @@ public record CPF(String valor) {
         }
     }
     private static boolean valido(String cpf){
-        return cpf.length() == 11;
+        return cpf.matches("\\d{11}");
     }
 }
