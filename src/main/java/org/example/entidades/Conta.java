@@ -41,4 +41,7 @@ public class Conta {
         return Collections.unmodifiableList(transacoes);
     }
 
+    public int getNumero() {
+        return numero;
+    }
 }
