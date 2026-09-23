@@ -1,14 +1,13 @@
-package org.example.Repositorios;
+package org.example.repositorios;
 
 import org.example.entidades.Conta;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface ContaRepository {
     Conta salvar(Conta conta);
     Optional<Conta> buscarPorId(int numero);
-    List<Conta> listaContas();
+    List<Conta> lista();
 
 }

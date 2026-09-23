@@ -1,4 +1,4 @@
-package org.example.Repositorios;
+package org.example.repositorios;
 
 import org.example.entidades.Conta;
 
@@ -19,7 +19,7 @@ public class ContaEmMemoria implements ContaRepository{
     }
 
     @Override
-    public List<Conta> listaContas() {
+    public List<Conta> lista() {
         return List.copyOf(contaMap.values());
     }
 }

@@ -1,4 +1,4 @@
-package org.example.Repositorios;
+package org.example.repositorios;
 
 import org.example.entidades.Cliente;
 
@@ -8,7 +8,7 @@ public class ClienteEmMemoria implements ClienteRepository{
     private final Map<UUID, Cliente> clienteMap = new HashMap<>();
 
     @Override
-    public Cliente salvarCliente(Cliente cliente) {
+    public Cliente salvar(Cliente cliente) {
         Objects.requireNonNull(cliente, "Cliente não pode ser nulo");
         clienteMap.put(cliente.getId(), cliente);
         return cliente;
@@ -21,7 +21,7 @@ public class ClienteEmMemoria implements ClienteRepository{
     }
 
     @Override
-    public List<Cliente> listaClientes() {
+    public List<Cliente> lista() {
         return new ArrayList<>(clienteMap.values());
     }
 }

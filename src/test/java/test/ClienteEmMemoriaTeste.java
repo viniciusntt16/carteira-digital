@@ -1,7 +1,7 @@
 package test;
 
-import org.example.Repositorios.ClienteEmMemoria;
-import org.example.Repositorios.ClienteRepository;
+import org.example.repositorios.ClienteEmMemoria;
+import org.example.repositorios.ClienteRepository;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
