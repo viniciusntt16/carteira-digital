@@ -14,7 +14,7 @@ public class ClienteEmMemoria implements ClienteRepository{
 
         boolean cpfExiste = clienteMap.values().stream()
                 .anyMatch(cliente1 -> cliente1.getCpf().equals(cliente.getCpf()));
-        if(cpfExiste == true){
+        if(cpfExiste){
             throw new ClienteDuplicadoException(
                      cliente.getCpf());
         }
