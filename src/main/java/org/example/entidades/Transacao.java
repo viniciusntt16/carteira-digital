@@ -32,5 +32,4 @@ public class Transacao {
         this.contaDestino = contaDestino;
     }
 
-
 }

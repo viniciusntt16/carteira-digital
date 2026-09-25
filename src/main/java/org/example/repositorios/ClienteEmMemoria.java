@@ -1,6 +1,7 @@
 package org.example.repositorios;
 
 import org.example.entidades.Cliente;
+import org.example.exceptions.ClienteDuplicadoException;
 
 import java.util.*;
 
@@ -10,6 +11,13 @@ public class ClienteEmMemoria implements ClienteRepository{
     @Override
     public Cliente salvar(Cliente cliente) {
         Objects.requireNonNull(cliente, "Cliente não pode ser nulo");
+
+        boolean cpfExiste = clienteMap.values().stream()
+                .anyMatch(cliente1 -> cliente1.getCpf().equals(cliente.getCpf()));
+        if(cpfExiste == true){
+            throw new ClienteDuplicadoException(
+                     cliente.getCpf());
+        }
         clienteMap.put(cliente.getId(), cliente);
         return cliente;
     }
