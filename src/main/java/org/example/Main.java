@@ -28,7 +28,5 @@ public class Main {
                 1500,
                 LocalDateTime.now(),
                 conta2, conta1);
-        System.out.println(conta1.getTransacoes());
-        System.out.println(conta1.getTransacoes());
     }
 }
