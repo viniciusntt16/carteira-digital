@@ -3,7 +3,6 @@ package org.example.entidades;
 import org.example.objetos.TIPO;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.UUID;
 
 public class Transacao {

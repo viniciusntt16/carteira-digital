@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ClientesIguaisTeste {
+public class ClientesIguaisTest {
     @Test
     void deveRetornarClientesIguais(){
         Cliente c1 = new Cliente(UUID.randomUUID(),"Vinicius",new CPF("12345678910"));

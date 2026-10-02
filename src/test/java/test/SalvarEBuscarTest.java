@@ -13,7 +13,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertSame;
 
-public class SalvarEBuscarTeste {
+public class SalvarEBuscarTest {
     @Test
     void salvaEBuscaConta(){
         Cliente c1 = new Cliente(

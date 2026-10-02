@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ListaVaziaTeste {
+public class ListaVaziaTest {
     @Test
     void listaVaziaCliente(){
         ClienteRepository clienteRepository = new ClienteEmMemoria();
