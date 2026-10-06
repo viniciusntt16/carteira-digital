@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ContaEmMemoriaTeste {
+public class ContaEmMemoriaTest {
     @Test
     void contaRetornaOptionalRetornaVazio(){
         ContaRepository contaRepository = new ContaEmMemoria();

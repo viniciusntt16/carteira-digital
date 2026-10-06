@@ -12,7 +12,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ClienteDuplicadoTeste {
+public class ClienteDuplicadoTest {
     @Test
     void clienteDuplicado() {
         ClienteRepository repository = new ClienteEmMemoria();

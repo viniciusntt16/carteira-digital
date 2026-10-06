@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class ContaNaoEncontradaTeste {
+public class ContaNaoEncontradaTest {
     @Test
     void contaNaoEncontrada(){
         ContaRepository contaRepository = new ContaEmMemoria();

@@ -9,7 +9,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class ClienteEmMemoriaTeste {
+public class ClienteEmMemoriaTest {
     @Test
     void clienteRetornaOptionalVazio(){
         ClienteRepository repository = new ClienteEmMemoria();
