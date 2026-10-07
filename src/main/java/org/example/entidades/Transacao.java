@@ -2,33 +2,42 @@ package org.example.entidades;
 
 import org.example.objetos.TIPO;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Transacao {
     private final UUID id;
     private final TIPO tipo;
-    private final double valor;
+    private final BigDecimal valor;
     private final LocalDateTime dataHora;
     private final Conta contaOrigem;
     private Conta contaDestino;
 
 
-    public Transacao(UUID id, TIPO tipo, double valor, LocalDateTime dataHora, Conta contaOrigem) {
+    public Transacao(UUID id, TIPO tipo, BigDecimal valor, LocalDateTime dataHora, Conta contaOrigem) {
         this.id = id;
         this.tipo = tipo;
-        this.valor = valor;
+        this.valor = padronizarValor(valor);
         this.dataHora = dataHora;
         this.contaOrigem = contaOrigem;
     }
 
-    public Transacao(UUID id, TIPO tipo, double valor, LocalDateTime dataHora, Conta contaOrigem, Conta contaDestino) {
+    public Transacao(UUID id, TIPO tipo, BigDecimal valor, LocalDateTime dataHora, Conta contaOrigem, Conta contaDestino) {
         this.id = id;
         this.tipo = tipo;
-        this.valor = valor;
+        this.valor = padronizarValor(valor);
         this.dataHora = dataHora;
         this.contaOrigem = contaOrigem;
         this.contaDestino = contaDestino;
+    }
+
+    private BigDecimal padronizarValor(BigDecimal valor) {
+        Objects.requireNonNull(valor, "Valor não pode ser nulo");
+
+        return valor.setScale(2, RoundingMode.HALF_EVEN);
     }
 
     public UUID getId() {
@@ -39,7 +48,7 @@ public class Transacao {
         return tipo;
     }
 
-    public double getValor() {
+    public BigDecimal getValor() {
         return valor;
     }
 

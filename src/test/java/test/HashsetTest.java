@@ -5,6 +5,7 @@ import org.example.entidades.Conta;
 import org.example.objetos.CPF;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -29,8 +30,8 @@ public class HashsetTest {
         Cliente c2 = new Cliente(UUID.randomUUID(), "Peres", new CPF("12345678911"));
 
         Set<Conta> contas = new HashSet<>();
-        contas.add(new Conta(1, c1, 1000));
-        contas.add(new Conta(1, c2, 1500));
+        contas.add(new Conta(1, c1, BigDecimal.valueOf(1000)));
+        contas.add(new Conta(1, c2, BigDecimal.valueOf(1500)));
 
         int tamanhoEsperadoDoSet = contas.size();
         assertEquals(1, tamanhoEsperadoDoSet);
