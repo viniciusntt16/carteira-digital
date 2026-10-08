@@ -48,7 +48,7 @@ public class Conta {
         if(saldo.compareTo(valorPadronizado) < 0){
             throw new SaldoInsuficienteException(numero, valor, saldo);
         }
-        saldo = saldo.subtract(valor).setScale(2, RoundingMode.HALF_EVEN);
+        saldo = saldo.subtract(valorPadronizado).setScale(2, RoundingMode.HALF_EVEN);
     }
 
     private BigDecimal padronizarValor(BigDecimal valor) {
