@@ -2,16 +2,20 @@ package org.example.entidades;
 
 import org.example.exceptions.SaldoInsuficienteException;
 
+import java.math.BigDecimal;
+import java.util.Objects;
+import java.math.RoundingMode;
+
 public class Conta {
     protected int numero;
     protected Cliente cliente;
-    protected double saldo;
+    protected BigDecimal saldo;
 
     public Conta(){}
-    public Conta(int numero, Cliente cliente, double saldo) {
+    public Conta(int numero, Cliente cliente, BigDecimal saldo) {
         this.numero = numero;
         this.cliente = cliente;
-        this.saldo = saldo;
+        this.saldo = padronizarValor(saldo);
     }
     @Override
     public boolean equals(Object obj){
@@ -23,16 +27,37 @@ public class Conta {
     public int hashCode(){
         return Integer.hashCode(numero);
     }
-    public void creditar(double valor){
-        saldo += valor;
+    public void creditar(BigDecimal valor) {
+        BigDecimal valorPadronizado = padronizarValor(valor);
+
+        if (valorPadronizado.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException(
+                    "O valor do crédito deve ser maior que zero"
+            );
+        }
+
+        saldo = saldo.add(valorPadronizado)
+                .setScale(2, RoundingMode.HALF_EVEN);
     }
-    public void debitar(double valor){
-        if(saldo < valor){
+    public void debitar(BigDecimal valor){
+        BigDecimal valorPadronizado = padronizarValor(valor);
+        if(valorPadronizado.compareTo(BigDecimal.ZERO) <= 0){
+            throw new IllegalArgumentException("O valor a ser debitado deve ser maior que zero");
+        }
+
+        if(saldo.compareTo(valorPadronizado) < 0){
             throw new SaldoInsuficienteException(numero, valor, saldo);
         }
-        saldo -= valor;
+        saldo = saldo.subtract(valorPadronizado).setScale(2, RoundingMode.HALF_EVEN);
     }
-    public double getSaldo() {
+
+    private BigDecimal padronizarValor(BigDecimal valor) {
+        Objects.requireNonNull(valor, "Valor não pode ser nulo");
+
+        return valor.setScale(2, RoundingMode.HALF_EVEN);
+    }
+
+    public BigDecimal getSaldo() {
         return saldo;
     }
     public int getNumero() {

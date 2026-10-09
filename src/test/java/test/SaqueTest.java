@@ -11,8 +11,11 @@ import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoEmMemoria;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.ContaService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,18 +23,26 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class SaqueTest {
+    private ContaRepository contaRepository;
+    private TransacaoRepository transacaoRepository;
+    private ContaService contaService;
+    private Cliente cliente;
+    private Conta conta;
+    @BeforeEach
+    void preparar(){
+        contaRepository = new ContaEmMemoria();
+        transacaoRepository = new TransacaoEmMemoria();
+        contaService = new ContaService(contaRepository, transacaoRepository);
+        cliente = new Cliente(UUID.randomUUID(), "Vinicius",
+                new CPF("12345678910"));
+        conta = new Conta(1, cliente, BigDecimal.valueOf(1000));
+        contaRepository.salvar(conta);
+    }
 
     @Test
     void saqueTeste(){
-        ContaRepository contaRepository = new ContaEmMemoria();
-        TransacaoRepository transacaoRepository = new TransacaoEmMemoria();
-        ContaService contaService = new ContaService(contaRepository, transacaoRepository);
-        Cliente cliente = new Cliente(UUID.randomUUID(), "Vinicius",
-                new CPF("12345678910"));
-        Conta conta = new Conta(1, cliente, 1000);
-        contaRepository.salvar(conta);
-        contaService.sacar(1,500);
-        assertEquals(500, conta.getSaldo());
+        contaService.sacar(1, BigDecimal.valueOf(500));
+        assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_EVEN), conta.getSaldo());
 
         List<Transacao> transacaos = transacaoRepository.lista();
         assertEquals(1, transacaos.size());
@@ -40,33 +51,18 @@ public class SaqueTest {
 
     @Test
     void saqueValorIncorreto(){
-        ContaRepository contaRepository = new ContaEmMemoria();
-        TransacaoRepository transacaoRepository = new TransacaoEmMemoria();
-        ContaService contaService = new ContaService(contaRepository, transacaoRepository);
-        Cliente cliente = new Cliente(UUID.randomUUID(), "Vinicius",
-                new CPF("12345678910"));
-        Conta conta = new Conta(1, cliente, 1000);
-        contaRepository.salvar(conta);
-        contaService.depositar(1, 500);
+        contaService.depositar(1, BigDecimal.valueOf(500));
 
         assertThrows(IllegalArgumentException.class,
-                ()->contaService.sacar(1, 0));
+                ()->contaService.sacar(1, BigDecimal.valueOf(0)));
         assertThrows(IllegalArgumentException.class,
-                ()->contaService.sacar(1, -1));
+                ()->contaService.sacar(1, BigDecimal.valueOf(-1)));
     }
 
     @Test
     void saqueNaoRegistraErro(){
-        ContaRepository contaRepository = new ContaEmMemoria();
-        TransacaoRepository transacaoRepository = new TransacaoEmMemoria();
-        ContaService contaService = new ContaService(contaRepository, transacaoRepository);
-        Cliente cliente = new Cliente(UUID.randomUUID(), "Vinicius",
-                new CPF("12345678910"));
-        Conta conta = new Conta(1, cliente, 1000);
-        contaRepository.salvar(conta);
-
         assertThrows(SaldoInsuficienteException.class,
-                ()->contaService.sacar(1,1500));
+                ()->contaService.sacar(1,BigDecimal.valueOf(1500)));
         assertEquals(0, transacaoRepository.lista().size());
     }
 }

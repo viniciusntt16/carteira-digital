@@ -7,6 +7,7 @@ import org.example.objetos.TIPO;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoRepository;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -19,10 +20,8 @@ public class ContaService {
         this.transacaoRepository = transacaoRepository;
     }
 
-    public void depositar(int numeroConta, double valor){
-        if(valor <= 0){
-            throw new IllegalArgumentException("O valor a ser depositado não pode ser menor ou igual a zero");
-        }
+    public void depositar(int numeroConta, BigDecimal valor){
+
         Conta conta = contaRepository.buscarPorId(numeroConta)
                 .orElseThrow(()->new ContaNaoEncontradaException(numeroConta));
         conta.creditar(valor);
@@ -33,10 +32,7 @@ public class ContaService {
 
     }
 
-    public void sacar(int numeroConta, double valor){
-        if(valor <= 0){
-            throw new IllegalArgumentException("O valor a ser retirado deve ser maior que zero");
-        }
+    public void sacar(int numeroConta, BigDecimal valor){
         Conta conta = contaRepository.buscarPorId(numeroConta)
                 .orElseThrow(()->new ContaNaoEncontradaException(numeroConta));
         conta.debitar(valor);
@@ -46,12 +42,9 @@ public class ContaService {
         transacaoRepository.salvar(transacao);
     }
 
-    public void transferir(int numeroOrigem, int numeroDestino, double valor){
+    public void transferir(int numeroOrigem, int numeroDestino, BigDecimal valor){
         if(numeroOrigem == numeroDestino){
             throw new IllegalArgumentException("A conta de origem e destino da transferencia devem ser diferentes");
-        }
-        if(valor <= 0){
-            throw new IllegalArgumentException("O valor a ser transferido deve ser maior que zero");
         }
         Conta contaOrigem = contaRepository.buscarPorId(numeroOrigem)
                 .orElseThrow(()-> new ContaNaoEncontradaException(numeroOrigem));
