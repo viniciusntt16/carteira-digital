@@ -25,15 +25,18 @@ public class RelatorioService {
     }
 
     public List<Transacao> extrato(int numeroConta) {
-        return contaRepository.buscarPorId(numeroConta)
-                .map(conta -> transacaoRepository.lista().stream()
-                        .filter(transacao -> conta.equals(transacao.getContaOrigem())
-                                        || conta.equals(transacao.getContaDestino())
-                                ).sorted(
-                                        Comparator.comparing(Transacao::getDataHora)
-                                                .reversed()
-                                ).toList())
-                .orElseGet(List::of);
+        Conta conta = contaRepository.buscarPorId(numeroConta)
+                .orElseThrow(() -> new ContaNaoEncontradaException(numeroConta));
+
+        return transacaoRepository.lista()
+                .stream()
+                .filter(transacao ->
+                        conta.equals(transacao.getContaOrigem())
+                                || conta.equals(transacao.getContaDestino())
+                ).sorted(
+                        Comparator.comparing(Transacao::getDataHora).reversed()
+                )
+                .toList();
     }
 
     public Map<TIPO, BigDecimal> totalPorTipo(){

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,22 +46,69 @@ public class RelatorioComDadosTest {
         conta = new Conta(1, c1, BigDecimal.valueOf(1000));
         conta2 = new Conta(2, c2, BigDecimal.valueOf(2000));
         conta3 = new Conta(3, c1, BigDecimal.valueOf(2000));
+
+        conta.creditar(new BigDecimal("1000.00"));
+        conta2.debitar(new BigDecimal("500.00"));
+        conta.creditar(new BigDecimal("500.00"));
+        conta.creditar(new BigDecimal("500.00"));
+        conta.debitar(new BigDecimal("500.00"));
+        conta2.creditar(new BigDecimal("100.00"));
+
         contaRepository.salvar(conta);
         contaRepository.salvar(conta2);
         contaRepository.salvar(conta3);
+
+        Transacao depositoInicial = new Transacao(
+                UUID.randomUUID(),
+                TIPO.DEPOSITO,
+                new BigDecimal("1000.00"),
+                LocalDateTime.of(2026, 1, 10, 10, 0),
+                conta
+        );
+
+        Transacao transferencia = new Transacao(
+                UUID.randomUUID(),
+                TIPO.TRANSFERENCIA,
+                new BigDecimal("500.00"),
+                LocalDateTime.of(2026, 1, 10, 11, 0),
+                conta2,
+                conta
+        );
+
+        Transacao depositoConta1 = new Transacao(
+                UUID.randomUUID(),
+                TIPO.DEPOSITO,
+                new BigDecimal("500.00"),
+                LocalDateTime.of(2026, 1, 10, 12, 0),
+                conta
+        );
+
+        Transacao saque = new Transacao(
+                UUID.randomUUID(),
+                TIPO.SAQUE,
+                new BigDecimal("500.00"),
+                LocalDateTime.of(2026, 1, 10, 13, 0),
+                conta
+        );
+
+        Transacao depositoConta2 = new Transacao(
+                UUID.randomUUID(),
+                TIPO.DEPOSITO,
+                new BigDecimal("100.00"),
+                LocalDateTime.of(2026, 1, 10, 14, 0),
+                conta2
+        );
+
+        transacaoRepository.salvar(depositoInicial);
+        transacaoRepository.salvar(transferencia);
+        transacaoRepository.salvar(depositoConta1);
+        transacaoRepository.salvar(saque);
+        transacaoRepository.salvar(depositoConta2);
+
         relatorioService = new RelatorioService(
                 contaRepository,
                 transacaoRepository
         );
-        contaService.depositar(1, BigDecimal.valueOf(1000));
-        Thread.sleep(300);
-        contaService.transferir(2, 1, BigDecimal.valueOf(500));
-        Thread.sleep(300);
-        contaService.depositar(1, BigDecimal.valueOf(500));
-        Thread.sleep(300);
-        contaService.sacar(1, BigDecimal.valueOf(500));
-        Thread.sleep(300);
-        contaService.depositar(2, BigDecimal.valueOf(100));
     }
 
     @Test
@@ -70,6 +118,7 @@ public class RelatorioComDadosTest {
         assertEquals(TIPO.SAQUE, extrato.get(0).getTipo());
         assertEquals(TIPO.DEPOSITO, extrato.get(1).getTipo());
         assertEquals(TIPO.TRANSFERENCIA, extrato.get(2).getTipo());
+        assertEquals(TIPO.DEPOSITO, extrato.get(3).getTipo());
     }
 
     @Test

@@ -37,7 +37,23 @@ public class RelatorioVazioTest {
 
     @Test
     void extrato(){
+        assertThrows(ContaNaoEncontradaException.class,
+                () -> relatorioService.extrato(1));
+    }
+
+    @Test
+    void extratoDeContaSemTransacoes() {
+        Cliente c1 = new Cliente(UUID.randomUUID(), "Vinicius",
+                new CPF("12345678910")
+        );
+
+        Conta conta = new Conta(1, c1,
+                new BigDecimal("1000.00")
+        );
+
+        contaRepository.salvar(conta);
         List<Transacao> extrato = relatorioService.extrato(1);
+
         assertTrue(extrato.isEmpty());
     }
 
