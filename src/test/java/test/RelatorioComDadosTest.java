@@ -29,13 +29,12 @@ public class RelatorioComDadosTest {
     private ContaService contaService;
     private Cliente c1;
     private Cliente c2;
-    private Cliente c3;
     private Conta conta;
     private Conta conta2;
     private Conta conta3;
 
     @BeforeEach
-    void preparar() throws InterruptedException {
+    void preparar() {
         contaRepository = new ContaEmMemoria();
         transacaoRepository = new TransacaoEmMemoria();
         contaService = new ContaService(contaRepository, transacaoRepository);
@@ -58,42 +57,31 @@ public class RelatorioComDadosTest {
         contaRepository.salvar(conta2);
         contaRepository.salvar(conta3);
 
-        Transacao depositoInicial = new Transacao(
-                UUID.randomUUID(),
-                TIPO.DEPOSITO,
+        Transacao depositoInicial = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO,
                 new BigDecimal("1000.00"),
                 LocalDateTime.of(2026, 1, 10, 10, 0),
                 conta
         );
 
-        Transacao transferencia = new Transacao(
-                UUID.randomUUID(),
-                TIPO.TRANSFERENCIA,
+        Transacao transferencia = new Transacao(UUID.randomUUID(), TIPO.TRANSFERENCIA,
                 new BigDecimal("500.00"),
                 LocalDateTime.of(2026, 1, 10, 11, 0),
-                conta2,
-                conta
+                conta2, conta
         );
 
-        Transacao depositoConta1 = new Transacao(
-                UUID.randomUUID(),
-                TIPO.DEPOSITO,
+        Transacao depositoConta1 = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO,
                 new BigDecimal("500.00"),
                 LocalDateTime.of(2026, 1, 10, 12, 0),
                 conta
         );
 
-        Transacao saque = new Transacao(
-                UUID.randomUUID(),
-                TIPO.SAQUE,
+        Transacao saque = new Transacao(UUID.randomUUID(), TIPO.SAQUE,
                 new BigDecimal("500.00"),
                 LocalDateTime.of(2026, 1, 10, 13, 0),
                 conta
         );
 
-        Transacao depositoConta2 = new Transacao(
-                UUID.randomUUID(),
-                TIPO.DEPOSITO,
+        Transacao depositoConta2 = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO,
                 new BigDecimal("100.00"),
                 LocalDateTime.of(2026, 1, 10, 14, 0),
                 conta2
@@ -106,8 +94,7 @@ public class RelatorioComDadosTest {
         transacaoRepository.salvar(depositoConta2);
 
         relatorioService = new RelatorioService(
-                contaRepository,
-                transacaoRepository
+                contaRepository, transacaoRepository
         );
     }
 
