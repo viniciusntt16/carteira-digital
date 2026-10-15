@@ -8,7 +8,8 @@ Com o Maven instalado e estando na pasta raiz do projeto, execute:
 
 ```bash
 mvn test
-```text
+
+```
 
 Esse comando compila o projeto e executa todos os testes automatizados.
 
@@ -80,8 +81,11 @@ Como `CPF` foi criado usando `record`, o Java gera automaticamente os métodos `
 
 ### Suas exceções são checked ou unchecked? O que muda para quem chama o serviço?
 
-As exceções do projeto são unchecked, ou seja, herdam de `RuntimeException`, porque sua função é apenas informar ao usuário que determinada operação não pode ser executada. Dessa forma, a decisão sobre o próximo passo fica a cargo de quem consumir a exceção.
+As exceções do projeto são unchecked, ou seja, herdam de RuntimeException. Elas são utilizadas para indicar que determinada operação não pode ser executada devido a uma regra de negócio, como saldo insuficiente ou conta inexistente.
 
+Como são exceções unchecked, quem chama o serviço não é obrigado pelo compilador a tratá-las com try/catch nem a declará-las com throws. A decisão de como reagir ao erro fica a cargo de quem utiliza o serviço, que pode, por exemplo, exibir uma mensagem ao usuário ou apenas permitir que a exceção seja propagada.
+
+Já as exceções checked obrigam o programador a tratar a exceção com try/catch ou declará-la na assinatura do método usando throws.
 ### Por que o `buscarPorId` retorna `Optional` e não `null`? Em que situação usar `Optional` seria abuso?
 
 `buscarPorId` retorna `Optional` porque uma conta com o número informado pode não existir. Em vez de retornar `null` e deixar o risco de `NullPointerException` para quem chamou o método, o `Optional` deixa a ausência do resultado explícita e obriga o código a tratar esse cenário.
@@ -91,13 +95,14 @@ Por exemplo, é possível lançar uma exceção caso a conta não exista:
 ```java
 Conta conta = contaRepository.buscarPorId(numeroConta)
         .orElseThrow(() -> new ContaNaoEncontradaException(numeroConta));
-```text
+```
 
 Também é possível verificar se a conta existe antes de realizar alguma operação.
 
 O uso de `Optional` seria abuso quando não existe possibilidade real de ausência, como em um método `getSaldo()` de uma conta que sempre possui saldo. Também seria desnecessário retornar `Optional<List<Conta>>`, pois uma lista vazia já representa naturalmente a ausência de resultados.
 A transferência é garantida porque, primeiro, são realizados testes para verificar se a conta que irá receber não é a mesma que está enviando e se ela existe. Após isso, o valor é debitado da conta de origem, garantindo que haja saldo suficiente; somente então o saldo da conta de destino é atualizado.
 
+### Decisões de design
 A regra de saldo foi mantida na própria conta para que a responsabilidade de gerenciá-lo permaneça nela. Dessa forma, independentemente de a conta ser utilizada em um serviço ou em uma transação, ela terá controle sobre o próprio saldo.
 
 Para manter o padrão anterior, mantive na própria conta a validação de que o valor deve ser maior que zero, para que ela tenha controle sobre o próprio saldo.
