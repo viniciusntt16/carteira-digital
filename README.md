@@ -7,3 +7,5 @@ A transferência é garantida porque, primeiro, são realizados testes para veri
 A regra de saldo foi mantida na própria conta para que a responsabilidade de gerenciá-lo permaneça nela. Dessa forma, independentemente de a conta ser utilizada em um serviço ou em uma transação, ela terá controle sobre o próprio saldo.
 
 Para manter o padrão anterior, mantive na própria conta a validação de que o valor deve ser maior que zero, para que ela tenha controle sobre o próprio saldo.
+
+Escolhi manter o método extrato retornando a exceção ContaNaoEncontrada, para informar ao usuário que a conta procurada não foi encontrada na base de dados.
