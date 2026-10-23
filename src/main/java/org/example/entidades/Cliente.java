@@ -1,13 +1,24 @@
 package org.example.entidades;
 
+import jakarta.persistence.*;
+import org.example.conversores.CPFConverter;
 import org.example.objetos.CPF;
 
+import java.util.Objects;
 import java.util.UUID;
 
+@Entity
+@Table(name = "Clientes")
 public class Cliente {
+    @Id
     protected UUID id;
+    @Column(nullable = false)
     protected String nome;
-    protected final CPF cpf;
+    @Convert(converter = CPFConverter.class)
+    @Column(nullable = false, unique = true, length = 11)
+    protected CPF cpf;
+
+    protected Cliente(){}
 
     public Cliente(UUID id, String nome, CPF cpf) {
         this.id = id;
@@ -24,7 +35,7 @@ public class Cliente {
     }
 
     public void setNome(String nome) {
-        this.nome = nome;
+        this.nome = Objects.requireNonNull(nome, "O nome não pode ser null");
     }
 
     public CPF getCpf() {

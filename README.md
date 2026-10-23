@@ -100,6 +100,7 @@ Conta conta = contaRepository.buscarPorId(numeroConta)
 Também é possível verificar se a conta existe antes de realizar alguma operação.
 
 O uso de `Optional` seria abuso quando não existe possibilidade real de ausência, como em um método `getSaldo()` de uma conta que sempre possui saldo. Também seria desnecessário retornar `Optional<List<Conta>>`, pois uma lista vazia já representa naturalmente a ausência de resultados.
+
 A transferência é garantida porque, primeiro, são realizados testes para verificar se a conta que irá receber não é a mesma que está enviando e se ela existe. Após isso, o valor é debitado da conta de origem, garantindo que haja saldo suficiente; somente então o saldo da conta de destino é atualizado.
 
 ### Decisões de design
@@ -108,3 +109,8 @@ A regra de saldo foi mantida na própria conta para que a responsabilidade de ge
 Para manter o padrão anterior, mantive na própria conta a validação de que o valor deve ser maior que zero, para que ela tenha controle sobre o próprio saldo.
 
 Escolhi manter o método extrato retornando a exceção ContaNaoEncontrada, para informar ao usuário que a conta procurada não foi encontrada na base de dados.
+
+### Decisões fase 1
+Decidi manter o mesmo repositório para acompanhar as mudanças do Java puro para o Spring Boot, além de poder alterar as classes aos poucos e observar a evolução, em vez de simplesmente criar tudo do zero já no Spring Boot.
+
+O repositório de clientes agora é uma interface JPA. Dessa forma, o Spring Boot já disponibiliza os métodos para salvar, buscar e listar. No entanto, implementei um serviço para aplicar as regras de negócio ao salvar, impedindo o cadastro de clientes com CPF duplicado.
