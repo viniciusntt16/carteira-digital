@@ -10,14 +10,9 @@ import java.math.BigDecimal;
 import java.util.Objects;
 import java.math.RoundingMode;
 
-@Entity
-@Table(name = "Contas")
 public class Conta {
-    @Id
     protected int numero;
-    @Column(nullable = false)
     protected Cliente cliente;
-    @Column(nullable = false)
     protected BigDecimal saldo;
 
     public Conta(){}
