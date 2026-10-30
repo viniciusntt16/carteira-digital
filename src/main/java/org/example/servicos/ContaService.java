@@ -22,39 +22,39 @@ public class ContaService {
 
     public void depositar(int numeroConta, BigDecimal valor){
 
-        Conta conta = contaRepository.buscarPorId(numeroConta)
+        Conta conta = contaRepository.findById(numeroConta)
                 .orElseThrow(()->new ContaNaoEncontradaException(numeroConta));
         conta.creditar(valor);
 
         Transacao transacao = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO, valor,
                 LocalDateTime.now(), conta);
-        transacaoRepository.salvar(transacao);
+        transacaoRepository.save(transacao);
 
     }
 
     public void sacar(int numeroConta, BigDecimal valor){
-        Conta conta = contaRepository.buscarPorId(numeroConta)
+        Conta conta = contaRepository.findById(numeroConta)
                 .orElseThrow(()->new ContaNaoEncontradaException(numeroConta));
         conta.debitar(valor);
 
         Transacao transacao = new Transacao(UUID.randomUUID(), TIPO.SAQUE, valor,
                 LocalDateTime.now(), conta);
-        transacaoRepository.salvar(transacao);
+        transacaoRepository.save(transacao);
     }
 
     public void transferir(int numeroOrigem, int numeroDestino, BigDecimal valor){
         if(numeroOrigem == numeroDestino){
             throw new IllegalArgumentException("A conta de origem e destino da transferencia devem ser diferentes");
         }
-        Conta contaOrigem = contaRepository.buscarPorId(numeroOrigem)
+        Conta contaOrigem = contaRepository.findById(numeroOrigem)
                 .orElseThrow(()-> new ContaNaoEncontradaException(numeroOrigem));
-        Conta contaDestino = contaRepository.buscarPorId(numeroDestino)
+        Conta contaDestino = contaRepository.findById(numeroDestino)
                 .orElseThrow(()-> new ContaNaoEncontradaException(numeroDestino));
         contaOrigem.debitar(valor);
         contaDestino.creditar(valor);
 
         Transacao transacao = new Transacao(UUID.randomUUID(), TIPO.TRANSFERENCIA, valor,
                 LocalDateTime.now(), contaOrigem, contaDestino);
-        transacaoRepository.salvar(transacao);
+        transacaoRepository.save(transacao);
     }
 }
