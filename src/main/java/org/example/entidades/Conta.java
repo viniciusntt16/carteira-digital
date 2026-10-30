@@ -1,5 +1,9 @@
 package org.example.entidades;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.example.exceptions.SaldoInsuficienteException;
 
 import java.math.BigDecimal;
