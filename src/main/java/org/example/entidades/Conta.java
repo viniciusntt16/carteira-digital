@@ -1,18 +1,23 @@
 package org.example.entidades;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import org.example.exceptions.SaldoInsuficienteException;
 
 import java.math.BigDecimal;
 import java.util.Objects;
 import java.math.RoundingMode;
 
+@Entity
+@Table(name = "contas")
 public class Conta {
+    @Id
     protected int numero;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "cliente_id", nullable = false)
     protected Cliente cliente;
+
+    @Column(nullable = false, precision = 19, scale = 2)
     protected BigDecimal saldo;
 
     public Conta(){}
