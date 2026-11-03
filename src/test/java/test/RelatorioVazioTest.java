@@ -6,7 +6,6 @@ import org.example.entidades.Transacao;
 import org.example.exceptions.ContaNaoEncontradaException;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
-import org.example.repositorios.ContaEmMemoria;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoEmMemoria;
 import org.example.repositorios.TransacaoRepository;
@@ -18,6 +17,8 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RelatorioVazioTest {
 
@@ -27,7 +28,7 @@ public class RelatorioVazioTest {
 
     @BeforeEach
     void preparar(){
-        contaRepository = new ContaEmMemoria();
+        contaRepository = mock(ContaRepository.class);
         transacaoRepository = new TransacaoEmMemoria();
         relatorioService = new RelatorioService(
                 contaRepository,
@@ -51,7 +52,7 @@ public class RelatorioVazioTest {
                 new BigDecimal("1000.00")
         );
 
-        contaRepository.salvar(conta);
+        when(contaRepository.findById(1)).thenReturn(Optional.of(conta));
         List<Transacao> extrato = relatorioService.extrato(1);
 
         assertTrue(extrato.isEmpty());

@@ -5,7 +5,6 @@ import org.example.entidades.Conta;
 import org.example.entidades.Transacao;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
-import org.example.repositorios.ContaEmMemoria;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoEmMemoria;
 import org.example.repositorios.TransacaoRepository;
@@ -21,6 +20,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class RelatorioComDadosTest {
     private ContaRepository contaRepository;
@@ -35,7 +36,7 @@ public class RelatorioComDadosTest {
 
     @BeforeEach
     void preparar() {
-        contaRepository = new ContaEmMemoria();
+        contaRepository = mock(ContaRepository.class);
         transacaoRepository = new TransacaoEmMemoria();
         contaService = new ContaService(contaRepository, transacaoRepository);
         c1 = new Cliente(UUID.randomUUID(), "Vinicius",
@@ -53,9 +54,10 @@ public class RelatorioComDadosTest {
         conta.debitar(new BigDecimal("500.00"));
         conta2.creditar(new BigDecimal("100.00"));
 
-        contaRepository.salvar(conta);
-        contaRepository.salvar(conta2);
-        contaRepository.salvar(conta3);
+        when(contaRepository.findById(1)).thenReturn(Optional.of(conta));
+        when(contaRepository.findById(2)).thenReturn(Optional.of(conta2));
+        when(contaRepository.findById(3)).thenReturn(Optional.of(conta3));
+        when(contaRepository.findAll()).thenReturn(List.of(conta, conta2, conta3));
 
         Transacao depositoInicial = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO,
                 new BigDecimal("1000.00"),

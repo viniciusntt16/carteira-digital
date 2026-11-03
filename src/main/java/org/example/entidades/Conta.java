@@ -20,6 +20,7 @@ public class Conta {
     @Column(nullable = false, precision = 19, scale = 2)
     protected BigDecimal saldo;
 
+
     public Conta(){}
     public Conta(int numero, Cliente cliente, BigDecimal saldo) {
         this.numero = numero;

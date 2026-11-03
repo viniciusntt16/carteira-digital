@@ -33,10 +33,16 @@ public class ClienteDuplicadoTest {
     }
 
     @Test
-    void naoDeveSalvarClienteDuplicado(){
-        when(clienteRepository.findByCpf(c2.getCpf())).thenReturn(Optional.of(c1));
-        assertThrows(ClienteDuplicadoException.class, ()->clienteService.salvar(c2));
+    void naoDeveSalvarClienteDuplicado() {
+        when(clienteRepository.findByCpf(c2.getCpf()))
+                .thenReturn(Optional.of(c1));
+        assertThrows(
+                ClienteDuplicadoException.class,
+                () -> clienteService.salvar(c2)
+        );
+        verify(clienteRepository, never()).save(c2);
     }
+
 
     @Test
     void salvarDoisClientes(){

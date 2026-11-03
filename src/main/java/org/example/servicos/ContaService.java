@@ -28,7 +28,7 @@ public class ContaService {
 
         Transacao transacao = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO, valor,
                 LocalDateTime.now(), conta);
-        transacaoRepository.save(transacao);
+        transacaoRepository.salvar(transacao);
 
     }
 
@@ -39,7 +39,7 @@ public class ContaService {
 
         Transacao transacao = new Transacao(UUID.randomUUID(), TIPO.SAQUE, valor,
                 LocalDateTime.now(), conta);
-        transacaoRepository.save(transacao);
+        transacaoRepository.salvar(transacao);
     }
 
     public void transferir(int numeroOrigem, int numeroDestino, BigDecimal valor){
@@ -55,6 +55,6 @@ public class ContaService {
 
         Transacao transacao = new Transacao(UUID.randomUUID(), TIPO.TRANSFERENCIA, valor,
                 LocalDateTime.now(), contaOrigem, contaDestino);
-        transacaoRepository.save(transacao);
+        transacaoRepository.salvar(transacao);
     }
 }

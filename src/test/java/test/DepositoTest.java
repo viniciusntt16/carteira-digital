@@ -5,7 +5,6 @@ import org.example.entidades.Conta;
 import org.example.entidades.Transacao;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
-import org.example.repositorios.ContaEmMemoria;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoEmMemoria;
 import org.example.repositorios.TransacaoRepository;
@@ -16,10 +15,13 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class DepositoTest {
 
@@ -30,7 +32,7 @@ public class DepositoTest {
 
     @BeforeEach
     void preparar() {
-        contaRepository = new ContaEmMemoria();
+        contaRepository = mock(ContaRepository.class);
         transacaoRepository = new TransacaoEmMemoria();
 
         contaService = new ContaService(
@@ -50,7 +52,7 @@ public class DepositoTest {
                 BigDecimal.valueOf(1000)
         );
 
-        contaRepository.salvar(conta);
+        when(contaRepository.findById(1)).thenReturn(Optional.of(conta));
     }
 
     @Test
