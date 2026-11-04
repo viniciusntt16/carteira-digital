@@ -1,6 +1,7 @@
 package org.example.repositorios;
 
 import org.example.entidades.Transacao;
+import org.junit.jupiter.api.AfterEach;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +34,14 @@ public class ContaServiceJpaTest {
     @MockitoBean
     private TransacaoRepository transacaoRepository;
 
+    @AfterEach
+    void limparBanco() {
+        contaRepository.deleteAll();
+        clienteRepository.deleteAll();
+    }
+
     @Test
-    void Saldo(){
+    void depositarPersisteSaldoNoBanco() {
         UUID clienteId = UUID.randomUUID();
         int numeroConta = 1001;
 
@@ -43,18 +50,64 @@ public class ContaServiceJpaTest {
                 "Vinicius",
                 new CPF("12345678910")
         );
-        try {
-            clienteRepository.saveAndFlush(cliente);
-            Conta conta = new Conta(numeroConta, cliente, BigDecimal.valueOf(1000));
-            contaRepository.saveAndFlush(conta);
-            contaService.depositar(numeroConta, BigDecimal.valueOf(500));
-            Conta conta1 = contaRepository.findById(numeroConta).orElseThrow();
-            assertEquals(0, new BigDecimal("1500")
-                    .compareTo(conta1.getSaldo()));
-            verify(transacaoRepository).salvar(any(Transacao.class));
-        }finally {
-            contaRepository.deleteById(numeroConta);
-            clienteRepository.deleteById(clienteId);
-        }
+
+        clienteRepository.saveAndFlush(cliente);
+        Conta conta = new Conta(numeroConta, cliente, BigDecimal.valueOf(1000));
+        contaRepository.saveAndFlush(conta);
+        contaService.depositar(numeroConta, BigDecimal.valueOf(500));
+
+        Conta contaAtualizada = contaRepository.findById(numeroConta)
+                .orElseThrow();
+
+        assertEquals(0, new BigDecimal("1500")
+                .compareTo(contaAtualizada.getSaldo())
+        );
+
+        verify(transacaoRepository).salvar(any(Transacao.class));
     }
+
+    @Test
+    void transferenciaPersisteSaldoNoBanco() {
+        UUID clienteId = UUID.randomUUID();
+        UUID clienteId2 = UUID.randomUUID();
+        int numeroConta = 1001;
+        int numeroConta2 = 1002;
+
+        Cliente cliente = new Cliente(
+                clienteId,
+                "Vinicius",
+                new CPF("12345678910")
+        );
+
+        Cliente cliente2 = new Cliente(
+                clienteId2,
+                "Peres",
+                new CPF("12345678911")
+        );
+
+        clienteRepository.saveAndFlush(cliente);
+        clienteRepository.saveAndFlush(cliente2);
+
+        Conta conta = new Conta(numeroConta, cliente, BigDecimal.valueOf(1000));
+        Conta conta2 = new Conta(numeroConta2, cliente2, BigDecimal.valueOf(1000));
+
+        contaRepository.saveAndFlush(conta);
+        contaRepository.saveAndFlush(conta2);
+
+        contaService.transferir(numeroConta, numeroConta2, BigDecimal.valueOf(500));
+
+        Conta origemAtualizada = contaRepository.findById(numeroConta).orElseThrow();
+        Conta destinoAtualizada = contaRepository.findById(numeroConta2).orElseThrow();
+
+        assertEquals(0, new BigDecimal("500")
+                .compareTo(origemAtualizada.getSaldo())
+        );
+
+        assertEquals(0, new BigDecimal("1500")
+                .compareTo(destinoAtualizada.getSaldo())
+        );
+
+        verify(transacaoRepository).salvar(any(Transacao.class));
+    }
+
 }

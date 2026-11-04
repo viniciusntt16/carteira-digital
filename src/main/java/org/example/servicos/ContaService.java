@@ -1,6 +1,6 @@
 package org.example.servicos;
 
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.example.entidades.Conta;
 import org.example.entidades.Transacao;
 import org.example.exceptions.ContaNaoEncontradaException;
