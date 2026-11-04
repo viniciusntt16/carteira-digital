@@ -1,13 +1,7 @@
 package org.example.repositorios;
 
 import org.example.entidades.Conta;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-import java.util.Optional;
-
-public interface ContaRepository {
-    Conta salvar(Conta conta);
-    Optional<Conta> buscarPorId(int numero);
-    List<Conta> lista();
-
+public interface ContaRepository extends JpaRepository<Conta, Integer> {
 }

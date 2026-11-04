@@ -7,7 +7,6 @@ import org.example.exceptions.ContaNaoEncontradaException;
 import org.example.exceptions.SaldoInsuficienteException;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
-import org.example.repositorios.ContaEmMemoria;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoEmMemoria;
 import org.example.repositorios.TransacaoRepository;
@@ -18,10 +17,13 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class TransferenciaTest {
     private ContaRepository contaRepository;
@@ -34,7 +36,7 @@ public class TransferenciaTest {
 
     @BeforeEach
     void preparar(){
-        contaRepository = new ContaEmMemoria();
+        contaRepository = mock(ContaRepository.class);
         transacaoRepository = new TransacaoEmMemoria();
         contaService = new ContaService(contaRepository, transacaoRepository);
         c1 = new Cliente(UUID.randomUUID(), "Vinicius",
@@ -43,8 +45,9 @@ public class TransferenciaTest {
                 new CPF("12345678911"));
         conta = new Conta(1, c1, BigDecimal.valueOf(1000));
         conta2 = new Conta(2, c2, BigDecimal.valueOf(2000));
-        contaRepository.salvar(conta);
-        contaRepository.salvar(conta2);
+        when(contaRepository.findById(1)).thenReturn(Optional.of(conta));
+        when(contaRepository.findById(2)).thenReturn(Optional.of(conta2));
+
     }
 
     @Test

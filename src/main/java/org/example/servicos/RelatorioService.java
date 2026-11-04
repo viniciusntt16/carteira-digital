@@ -25,7 +25,7 @@ public class RelatorioService {
     }
 
     public List<Transacao> extrato(int numeroConta) {
-        Conta conta = contaRepository.buscarPorId(numeroConta)
+        Conta conta = contaRepository.findById(numeroConta)
                 .orElseThrow(() -> new ContaNaoEncontradaException(numeroConta));
 
         return transacaoRepository.lista()
@@ -47,14 +47,14 @@ public class RelatorioService {
     }
 
     public Optional<Cliente> clienteComMaiorSaldo(){
-        return contaRepository.lista().stream().max(Comparator.comparing(
+        return contaRepository.findAll().stream().max(Comparator.comparing(
                 Conta::getSaldo
         )).map(Conta::getCliente);
     }
 
     public List<Conta> contasSemMovimentacao(){
         List<Transacao> transacoes = transacaoRepository.lista();
-        return contaRepository.lista()
+        return contaRepository.findAll()
                 .stream()
                 .filter(conta ->
                         transacoes.stream().noneMatch(transacao ->
@@ -64,7 +64,7 @@ public class RelatorioService {
     }
 
     public Map<Cliente, BigDecimal> saldoTotalPorCliente() {
-        return contaRepository.lista()
+        return contaRepository.findAll()
                 .stream()
                 .collect(Collectors.groupingBy(Conta::getCliente,
                         Collectors.reducing(
