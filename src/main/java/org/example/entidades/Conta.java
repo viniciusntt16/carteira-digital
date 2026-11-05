@@ -13,13 +13,16 @@ public class Conta {
     @Id
     protected int numero;
 
+    @Version
+    @Column(nullable = false)
+    private Long versao;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cliente_id", nullable = false)
     protected Cliente cliente;
 
     @Column(nullable = false, precision = 19, scale = 2)
     protected BigDecimal saldo;
-
 
     public Conta(){}
     public Conta(int numero, Cliente cliente, BigDecimal saldo) {
@@ -31,7 +34,7 @@ public class Conta {
     public boolean equals(Object obj){
         if(this == obj) return true;
         if(!(obj instanceof Conta outra)) return false;
-        return numero == outra.numero;
+        return numero == outra.getNumero();
     }
     @Override
     public int hashCode(){
@@ -64,7 +67,12 @@ public class Conta {
     private BigDecimal padronizarValor(BigDecimal valor) {
         Objects.requireNonNull(valor, "Valor não pode ser nulo");
 
-        return valor.setScale(2, RoundingMode.HALF_EVEN);
+        if (valor.scale() > 2) {
+            throw new IllegalArgumentException(
+                    "O valor não pode ter mais de duas casas decimais"
+            );
+        }
+        return valor.setScale(2, RoundingMode.UNNECESSARY);
     }
 
     public BigDecimal getSaldo() {

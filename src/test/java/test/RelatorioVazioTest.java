@@ -7,7 +7,6 @@ import org.example.exceptions.ContaNaoEncontradaException;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
 import org.example.repositorios.ContaRepository;
-import org.example.repositorios.TransacaoEmMemoria;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.RelatorioService;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,8 +16,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RelatorioVazioTest {
 
@@ -29,7 +27,7 @@ public class RelatorioVazioTest {
     @BeforeEach
     void preparar(){
         contaRepository = mock(ContaRepository.class);
-        transacaoRepository = new TransacaoEmMemoria();
+        transacaoRepository = mock(TransacaoRepository.class);
         relatorioService = new RelatorioService(
                 contaRepository,
                 transacaoRepository
@@ -44,41 +42,84 @@ public class RelatorioVazioTest {
 
     @Test
     void extratoDeContaSemTransacoes() {
-        Cliente c1 = new Cliente(UUID.randomUUID(), "Vinicius",
+        Cliente cliente = new Cliente(
+                UUID.randomUUID(),
+                "Vinicius",
                 new CPF("12345678910")
         );
 
-        Conta conta = new Conta(1, c1,
+        Conta conta = new Conta(
+                1,
+                cliente,
                 new BigDecimal("1000.00")
         );
 
-        when(contaRepository.findById(1)).thenReturn(Optional.of(conta));
+        when(contaRepository.findById(1))
+                .thenReturn(Optional.of(conta));
+
+        when(transacaoRepository.buscarPorContaOrdenadoPorData(1))
+                .thenReturn(List.of());
+
         List<Transacao> extrato = relatorioService.extrato(1);
 
         assertTrue(extrato.isEmpty());
+
+        verify(contaRepository).findById(1);
+        verify(transacaoRepository).buscarPorContaOrdenadoPorData(1);
+
+        verify(transacaoRepository, never())
+                .save(any(Transacao.class));
     }
 
     @Test
     void totalPorTipo(){
-        Map<TIPO, BigDecimal> deposito = relatorioService.totalPorTipo();
-        assertTrue(deposito.isEmpty());
+        when(transacaoRepository.findAll())
+                .thenReturn(List.of());
+
+        Map<TIPO, BigDecimal> total = relatorioService.totalPorTipo();
+
+        assertTrue(total.isEmpty());
+
+        verify(transacaoRepository).findAll();
     }
 
     @Test
     void clienteComMaiorSaldo(){
+        when(contaRepository.findAll())
+                .thenReturn(List.of());
+
         Optional<Cliente> cliente = relatorioService.clienteComMaiorSaldo();
+
         assertTrue(cliente.isEmpty());
+
+        verify(contaRepository).findAll();
     }
 
     @Test
     void contasSemMovimento(){
+        when(contaRepository.findAll())
+                .thenReturn(List.of());
+
+        when(transacaoRepository.findAll())
+                .thenReturn(List.of());
+
         List<Conta> contas = relatorioService.contasSemMovimentacao();
+
         assertTrue(contas.isEmpty());
+
+        verify(contaRepository).findAll();
+        verify(transacaoRepository).findAll();
     }
 
     @Test
     void saldoTotalPorCliente(){
+        when(contaRepository.findAll())
+                .thenReturn(List.of());
+
         Map<Cliente, BigDecimal> saldo = relatorioService.saldoTotalPorCliente();
+
         assertTrue(saldo.isEmpty());
+
+        verify(contaRepository).findAll();
     }
 }

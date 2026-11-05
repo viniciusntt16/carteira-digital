@@ -1,6 +1,7 @@
 package org.example.repositorios;
 
 import org.example.entidades.Transacao;
+import org.example.objetos.TIPO;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Propagation;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,14 +33,16 @@ public class ContaServiceJpaTest {
     private  ContaRepository contaRepository;
     @Autowired
     private ContaService contaService;
-    @MockitoBean
+    @Autowired
     private TransacaoRepository transacaoRepository;
 
     @AfterEach
     void limparBanco() {
+        transacaoRepository.deleteAll();
         contaRepository.deleteAll();
         clienteRepository.deleteAll();
     }
+
 
     @Test
     void depositarPersisteSaldoNoBanco() {
@@ -62,8 +66,15 @@ public class ContaServiceJpaTest {
         assertEquals(0, new BigDecimal("1500")
                 .compareTo(contaAtualizada.getSaldo())
         );
+        List<Transacao> transacoes = transacaoRepository.findAll();
 
-        verify(transacaoRepository).salvar(any(Transacao.class));
+        assertEquals(1, transacoes.size());
+
+        Transacao transacaoSalva = transacoes.get(0);
+
+        assertEquals(TIPO.DEPOSITO, transacaoSalva.getTipo());
+        assertEquals(0, new BigDecimal("500")
+                .compareTo(transacaoSalva.getValor()));
     }
 
     @Test
@@ -78,7 +89,6 @@ public class ContaServiceJpaTest {
                 "Vinicius",
                 new CPF("12345678910")
         );
-
         Cliente cliente2 = new Cliente(
                 clienteId2,
                 "Peres",
@@ -106,8 +116,13 @@ public class ContaServiceJpaTest {
         assertEquals(0, new BigDecimal("1500")
                 .compareTo(destinoAtualizada.getSaldo())
         );
+        List<Transacao> transacoes = transacaoRepository.findAll();
+        assertEquals(1, transacoes.size());
 
-        verify(transacaoRepository).salvar(any(Transacao.class));
+        Transacao transacaoSalva = transacoes.get(0);
+        assertEquals(TIPO.TRANSFERENCIA, transacaoSalva.getTipo());
+        assertEquals(0, new BigDecimal("500")
+                .compareTo(transacaoSalva.getValor()));
     }
 
 }

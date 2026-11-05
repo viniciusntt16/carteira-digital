@@ -25,22 +25,14 @@ public class RelatorioService {
     }
 
     public List<Transacao> extrato(int numeroConta) {
-        Conta conta = contaRepository.findById(numeroConta)
+        contaRepository.findById(numeroConta)
                 .orElseThrow(() -> new ContaNaoEncontradaException(numeroConta));
 
-        return transacaoRepository.lista()
-                .stream()
-                .filter(transacao ->
-                        conta.equals(transacao.getContaOrigem())
-                                || conta.equals(transacao.getContaDestino())
-                ).sorted(
-                        Comparator.comparing(Transacao::getDataHora).reversed()
-                )
-                .toList();
+        return transacaoRepository.buscarPorContaOrdenadoPorData(numeroConta);
     }
 
     public Map<TIPO, BigDecimal> totalPorTipo(){
-        return transacaoRepository.lista().stream()
+        return transacaoRepository.findAll().stream()
                 .collect(Collectors.groupingBy(Transacao::getTipo, Collectors.reducing(
                         BigDecimal.ZERO, Transacao::getValor, BigDecimal::add
                 )));
@@ -53,7 +45,7 @@ public class RelatorioService {
     }
 
     public List<Conta> contasSemMovimentacao(){
-        List<Transacao> transacoes = transacaoRepository.lista();
+        List<Transacao> transacoes = transacaoRepository.findAll();
         return contaRepository.findAll()
                 .stream()
                 .filter(conta ->
