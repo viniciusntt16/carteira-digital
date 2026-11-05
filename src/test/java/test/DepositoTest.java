@@ -74,6 +74,7 @@ public class DepositoTest {
         );
         assertEquals(conta, transacaoSalva.getContaOrigem());
 
+
     }
 
     @Test
@@ -91,5 +92,6 @@ public class DepositoTest {
         assertThrows(IllegalArgumentException.class,
                 ()->contaService.depositar(1,BigDecimal.valueOf(0)));
         assertEquals(0, transacaoRepository.findAll().size());
+        verify(transacaoRepository, never()).save(any());
     }
 }

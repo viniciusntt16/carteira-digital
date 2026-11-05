@@ -36,11 +36,10 @@ Contém objetos de valor e enums utilizados no projeto.
 
 ### `repositorios`
 
-Contém as interfaces dos repositórios e suas implementações em memória.
-
-- `ClienteRepository` e `ClienteEmMemoria`: responsáveis por armazenar e buscar clientes.
-- `ContaRepository` e `ContaEmMemoria`: responsáveis por armazenar e buscar contas.
-- `TransacaoRepository` e `TransacaoEmMemoria`: responsáveis por armazenar e listar transações.
+Contém as interfaces dos repositórios JPA, que estendem JpaRepository e fornecem operações de persistência e consulta ao banco de dados.
+- `ClienteRepository`: responsável por salvar, buscar e remover clientes.
+- `ContaRepository`: responsável por salvar, buscar e remover contas.
+- `TransacaoRepository`: responsável por salvar, buscar e listar transações.
 
 As implementações em memória permitem testar o sistema sem a necessidade de um banco de dados.
 
@@ -63,11 +62,6 @@ Contém os testes automatizados do projeto. Os testes verificam os cenários com
 - As exceções de regras de negócio foram implementadas como exceções unchecked.
 - O `RelatorioService` utiliza Streams para filtrar, ordenar, agrupar e somar dados, sem utilizar laços tradicionais.
 - O CPF foi representado como um objeto de valor, pois dois clientes com o mesmo CPF devem ser identificados pelo mesmo valor de CPF.
-
-## O que eu faria diferente
-
-- Criaria uma interface para controlar data e hora, como `Clock`, para facilitar testes que dependem do horário das transações.
-- Persistiria os dados em um banco de dados em vez de utilizar apenas repositórios em memória.
 
 ## Perguntas da Fase 0
 

@@ -57,7 +57,7 @@ public class RelatorioVazioTest {
         when(contaRepository.findById(1))
                 .thenReturn(Optional.of(conta));
 
-        when(transacaoRepository.findAll())
+        when(transacaoRepository.buscarPorContaOrdenadoPorData(1))
                 .thenReturn(List.of());
 
         List<Transacao> extrato = relatorioService.extrato(1);
@@ -65,13 +65,11 @@ public class RelatorioVazioTest {
         assertTrue(extrato.isEmpty());
 
         verify(contaRepository).findById(1);
-        verify(transacaoRepository).findAll();
+        verify(transacaoRepository).buscarPorContaOrdenadoPorData(1);
 
         verify(transacaoRepository, never())
                 .save(any(Transacao.class));
     }
-
-
 
     @Test
     void totalPorTipo(){

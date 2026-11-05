@@ -88,7 +88,12 @@ public class Transacao {
     private BigDecimal padronizarValor(BigDecimal valor) {
         Objects.requireNonNull(valor, "Valor não pode ser nulo");
 
-        return valor.setScale(2, RoundingMode.HALF_EVEN);
+        if (valor.scale() > 2) {
+            throw new IllegalArgumentException(
+                    "O valor não pode ter mais de duas casas decimais"
+            );
+        }
+        return valor.setScale(2, RoundingMode.UNNECESSARY);
     }
 
     public UUID getId() {

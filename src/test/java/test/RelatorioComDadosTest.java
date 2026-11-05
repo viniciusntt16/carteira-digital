@@ -90,6 +90,14 @@ public class RelatorioComDadosTest {
                 depositoInicial, transferencia, depositoConta1, saque, depositoConta2
         );
 
+        when(transacaoRepository.buscarPorContaOrdenadoPorData(1))
+                .thenReturn(List.of(
+                        saque,
+                        depositoConta1,
+                        transferencia,
+                        depositoInicial
+                ));
+
         when(transacaoRepository.findAll())
                 .thenReturn(transacoes);
 
@@ -111,7 +119,7 @@ public class RelatorioComDadosTest {
         assertEquals(TIPO.TRANSFERENCIA, extrato.get(2).getTipo());
         assertEquals(TIPO.DEPOSITO, extrato.get(3).getTipo());
         verify(contaRepository).findById(1);
-        verify(transacaoRepository).findAll();
+        verify(transacaoRepository).buscarPorContaOrdenadoPorData(1);
     }
 
     @Test
