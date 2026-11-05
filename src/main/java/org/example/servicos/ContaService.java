@@ -32,7 +32,7 @@ public class ContaService {
         contaRepository.save(conta);
         Transacao transacao = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO, valor,
                 LocalDateTime.now(), conta);
-        transacaoRepository.salvar(transacao);
+        transacaoRepository.save(transacao);
     }
 
     @Transactional
@@ -43,7 +43,7 @@ public class ContaService {
         contaRepository.save(conta);
         Transacao transacao = new Transacao(UUID.randomUUID(), TIPO.SAQUE, valor,
                 LocalDateTime.now(), conta);
-        transacaoRepository.salvar(transacao);
+        transacaoRepository.save(transacao);
     }
 
     @Transactional
@@ -62,6 +62,6 @@ public class ContaService {
 
         Transacao transacao = new Transacao(UUID.randomUUID(), TIPO.TRANSFERENCIA, valor,
                 LocalDateTime.now(), contaOrigem, contaDestino);
-        transacaoRepository.salvar(transacao);
+        transacaoRepository.save(transacao);
     }
 }

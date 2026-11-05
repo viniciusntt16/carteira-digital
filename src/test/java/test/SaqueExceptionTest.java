@@ -2,10 +2,10 @@ package test;
 
 import org.example.entidades.Cliente;
 import org.example.entidades.Conta;
+import org.example.entidades.Transacao;
 import org.example.exceptions.SaldoInsuficienteException;
 import org.example.objetos.CPF;
 import org.example.repositorios.ContaRepository;
-import org.example.repositorios.TransacaoEmMemoria;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.ContaService;
 import org.junit.jupiter.api.Test;
@@ -17,14 +17,13 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class SaqueExceptionTest {
     @Test
     void saqueException(){
         ContaRepository contaRepository = mock(ContaRepository.class);
-        TransacaoRepository transacaoRepository = new TransacaoEmMemoria();
+        TransacaoRepository transacaoRepository = mock(TransacaoRepository.class);
         ContaService contaService = new ContaService(contaRepository, transacaoRepository);
         Cliente cliente = new Cliente(UUID.randomUUID(), "Vinicius",
                 new CPF("12345678910"));
@@ -35,5 +34,6 @@ public class SaqueExceptionTest {
                 ()->contaService.sacar(1,BigDecimal.valueOf(1500)));
         assertEquals(BigDecimal.valueOf(1000)
                 .setScale(2, RoundingMode.HALF_EVEN), conta.getSaldo());
+        verify(transacaoRepository, never()).save(any(Transacao.class));
     }
 }

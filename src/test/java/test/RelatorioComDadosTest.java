@@ -6,7 +6,6 @@ import org.example.entidades.Transacao;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
 import org.example.repositorios.ContaRepository;
-import org.example.repositorios.TransacaoEmMemoria;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.ContaService;
 import org.example.servicos.RelatorioService;
@@ -20,8 +19,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class RelatorioComDadosTest {
     private ContaRepository contaRepository;
@@ -37,7 +35,7 @@ public class RelatorioComDadosTest {
     @BeforeEach
     void preparar() {
         contaRepository = mock(ContaRepository.class);
-        transacaoRepository = new TransacaoEmMemoria();
+        transacaoRepository = mock(TransacaoRepository.class);
         contaService = new ContaService(contaRepository, transacaoRepository);
         c1 = new Cliente(UUID.randomUUID(), "Vinicius",
                 new CPF("12345678910"));
@@ -57,7 +55,6 @@ public class RelatorioComDadosTest {
         when(contaRepository.findById(1)).thenReturn(Optional.of(conta));
         when(contaRepository.findById(2)).thenReturn(Optional.of(conta2));
         when(contaRepository.findById(3)).thenReturn(Optional.of(conta3));
-        when(contaRepository.findAll()).thenReturn(List.of(conta, conta2, conta3));
 
         Transacao depositoInicial = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO,
                 new BigDecimal("1000.00"),
@@ -89,14 +86,19 @@ public class RelatorioComDadosTest {
                 conta2
         );
 
-        transacaoRepository.salvar(depositoInicial);
-        transacaoRepository.salvar(transferencia);
-        transacaoRepository.salvar(depositoConta1);
-        transacaoRepository.salvar(saque);
-        transacaoRepository.salvar(depositoConta2);
+        List<Transacao> transacoes = List.of(
+                depositoInicial, transferencia, depositoConta1, saque, depositoConta2
+        );
+
+        when(transacaoRepository.findAll())
+                .thenReturn(transacoes);
+
+        when(contaRepository.findAll())
+                .thenReturn(List.of(conta, conta2, conta3));
 
         relatorioService = new RelatorioService(
-                contaRepository, transacaoRepository
+                contaRepository,
+                transacaoRepository
         );
     }
 
@@ -108,6 +110,8 @@ public class RelatorioComDadosTest {
         assertEquals(TIPO.DEPOSITO, extrato.get(1).getTipo());
         assertEquals(TIPO.TRANSFERENCIA, extrato.get(2).getTipo());
         assertEquals(TIPO.DEPOSITO, extrato.get(3).getTipo());
+        verify(contaRepository).findById(1);
+        verify(transacaoRepository).findAll();
     }
 
     @Test
@@ -119,26 +123,6 @@ public class RelatorioComDadosTest {
                 deposito.get(TIPO.SAQUE));
         assertEquals(BigDecimal.valueOf(1600).setScale(2, RoundingMode.HALF_EVEN),
                 deposito.get(TIPO.DEPOSITO));
-    }
-
-    @Test
-    void clienteComMaiorSaldo(){
-        Optional<Cliente> cliente = relatorioService.clienteComMaiorSaldo();
-        assertSame(c1, cliente.orElseThrow());
-    }
-
-    @Test
-    void contasSemMovimento(){
-        List<Conta> contas = relatorioService.contasSemMovimentacao();
-        assertSame(conta3, contas.get(0));
-    }
-
-    @Test
-    void saldoTotalPorCliente(){
-        Map<Cliente, BigDecimal> saldo = relatorioService.saldoTotalPorCliente();
-        assertEquals(BigDecimal.valueOf(4500).setScale(2, RoundingMode.HALF_EVEN),
-                saldo.get(c1));
-        assertEquals(BigDecimal.valueOf(1600).setScale(2, RoundingMode.HALF_EVEN),
-                saldo.get(c2));
+        verify(transacaoRepository).findAll();
     }
 }

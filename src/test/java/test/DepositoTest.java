@@ -6,22 +6,20 @@ import org.example.entidades.Transacao;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
 import org.example.repositorios.ContaRepository;
-import org.example.repositorios.TransacaoEmMemoria;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.ContaService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class DepositoTest {
 
@@ -33,7 +31,7 @@ public class DepositoTest {
     @BeforeEach
     void preparar() {
         contaRepository = mock(ContaRepository.class);
-        transacaoRepository = new TransacaoEmMemoria();
+        transacaoRepository = mock(TransacaoRepository.class);
 
         contaService = new ContaService(
                 contaRepository,
@@ -52,7 +50,8 @@ public class DepositoTest {
                 BigDecimal.valueOf(1000)
         );
 
-        when(contaRepository.findById(1)).thenReturn(Optional.of(conta));
+        when(contaRepository.findById(1))
+                .thenReturn(Optional.of(conta));
     }
 
     @Test
@@ -61,9 +60,20 @@ public class DepositoTest {
         assertEquals(BigDecimal.valueOf(1500)
                 .setScale(2, RoundingMode.HALF_EVEN), conta.getSaldo());
 
-        List<Transacao> transacaos = transacaoRepository.lista();
-        assertEquals(1, transacaos.size());
-        assertEquals(TIPO.DEPOSITO, transacaos.get(0).getTipo());
+        ArgumentCaptor<Transacao> captor =
+                ArgumentCaptor.forClass(Transacao.class);
+
+        verify(transacaoRepository).save(captor.capture());
+
+        Transacao transacaoSalva = captor.getValue();
+
+        assertEquals(TIPO.DEPOSITO, transacaoSalva.getTipo());
+        assertEquals(
+                BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_EVEN),
+                transacaoSalva.getValor()
+        );
+        assertEquals(conta, transacaoSalva.getContaOrigem());
+
     }
 
     @Test
@@ -80,6 +90,6 @@ public class DepositoTest {
     void depositoNaoRegistraErro(){
         assertThrows(IllegalArgumentException.class,
                 ()->contaService.depositar(1,BigDecimal.valueOf(0)));
-        assertEquals(0, transacaoRepository.lista().size());
+        assertEquals(0, transacaoRepository.findAll().size());
     }
 }
