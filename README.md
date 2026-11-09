@@ -41,8 +41,7 @@ Contém as interfaces dos repositórios JPA, que estendem JpaRepository e fornec
 - `ContaRepository`: responsável por salvar, buscar e remover contas.
 - `TransacaoRepository`: responsável por salvar, buscar e listar transações.
 
-As implementações em memória permitem testar o sistema sem a necessidade de um banco de dados.
-
+Os testes utilizam mocks ou um banco H2 em memória, dependendo do cenário testado.
 ### `servicos`
 
 Contém os serviços que implementam as regras de negócio da aplicação.
@@ -57,7 +56,7 @@ Contém os testes automatizados do projeto. Os testes verificam os cenários com
 ## Decisões tomadas
 
 - Foi utilizado `BigDecimal` para representar valores monetários, evitando problemas de precisão que poderiam ocorrer com tipos como `double` e `float`.
-- Os repositórios foram implementados em memória para manter o projeto simples e permitir testes sem dependência de banco de dados.
+- Os repositórios utilizam Spring Data JPA para persistir e consultar os dados. Os testes de integração utilizam um banco H2 em memória.
 - As buscas por conta retornam `Optional`, pois uma conta com determinado número pode não existir.
 - As exceções de regras de negócio foram implementadas como exceções unchecked.
 - O `RelatorioService` utiliza Streams para filtrar, ordenar, agrupar e somar dados, sem utilizar laços tradicionais.
@@ -87,7 +86,7 @@ Já as exceções checked obrigam o programador a tratar a exceção com try/cat
 Por exemplo, é possível lançar uma exceção caso a conta não exista:
 
 ```java
-Conta conta = contaRepository.buscarPorId(numeroConta)
+Conta conta = contaRepository.findById(numeroConta)
         .orElseThrow(() -> new ContaNaoEncontradaException(numeroConta));
 ```
 
@@ -108,3 +107,7 @@ Escolhi manter o método extrato retornando a exceção ContaNaoEncontrada, para
 Decidi manter o mesmo repositório para acompanhar as mudanças do Java puro para o Spring Boot, além de poder alterar as classes aos poucos e observar a evolução, em vez de simplesmente criar tudo do zero já no Spring Boot.
 
 O repositório de clientes agora é uma interface JPA. Dessa forma, o Spring Boot já disponibiliza os métodos para salvar, buscar e listar. No entanto, implementei um serviço para aplicar as regras de negócio ao salvar, impedindo o cadastro de clientes com CPF duplicado.
+
+O repositório de contas também é uma interface JPA e utiliza os métodos fornecidos pelo Spring Data JPA, sem consultas adicionais.
+
+O repositório de transações também é uma interface JPA, mas possui uma consulta personalizada para buscar as transações de uma conta, ordenadas por data, para compor o extrato. Essa consulta utiliza JPQL.

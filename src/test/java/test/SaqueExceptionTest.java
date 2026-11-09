@@ -12,6 +12,9 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -24,7 +27,16 @@ public class SaqueExceptionTest {
     void saqueException(){
         ContaRepository contaRepository = mock(ContaRepository.class);
         TransacaoRepository transacaoRepository = mock(TransacaoRepository.class);
-        ContaService contaService = new ContaService(contaRepository, transacaoRepository);
+        Clock clockFixo = Clock.fixed(
+                Instant.parse("2026-01-10T14:30:00Z"),
+                ZoneOffset.UTC
+        );
+
+        ContaService contaService = new ContaService(
+                contaRepository,
+                transacaoRepository,
+                clockFixo
+        );
         Cliente cliente = new Cliente(UUID.randomUUID(), "Vinicius",
                 new CPF("12345678910"));
         Conta conta = new Conta(1, cliente, BigDecimal.valueOf(1000));

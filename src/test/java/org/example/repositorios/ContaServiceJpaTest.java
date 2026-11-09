@@ -17,6 +17,7 @@ import org.springframework.context.annotation.Import;
 import static org.mockito.ArgumentMatchers.any;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -123,6 +124,82 @@ public class ContaServiceJpaTest {
         assertEquals(TIPO.TRANSFERENCIA, transacaoSalva.getTipo());
         assertEquals(0, new BigDecimal("500")
                 .compareTo(transacaoSalva.getValor()));
+    }
+
+    @Test
+    void buscarEOrdenar() {
+        Cliente cliente = new Cliente(
+                UUID.randomUUID(),
+                "Vinicius",
+                new CPF("12345678910")
+        );
+        Cliente cliente2 = new Cliente(
+                UUID.randomUUID(),
+                "Peres",
+                new CPF("12345678911")
+        );
+
+        clienteRepository.saveAndFlush(cliente);
+        clienteRepository.saveAndFlush(cliente2);
+
+        Conta conta = new Conta(1, cliente, BigDecimal.valueOf(1000));
+        Conta conta2 = new Conta(2, cliente2, BigDecimal.valueOf(1000));
+
+        contaRepository.saveAndFlush(conta);
+        contaRepository.saveAndFlush(conta2);
+
+        Transacao depositoConta1 = new Transacao(
+                UUID.randomUUID(),
+                TIPO.DEPOSITO,
+                new BigDecimal("100.00"),
+                LocalDateTime.of(2026, 1, 10, 10, 0),
+                conta
+        );
+
+        Transacao recebidaPorConta1 = new Transacao(
+                UUID.randomUUID(),
+                TIPO.TRANSFERENCIA,
+                new BigDecimal("200.00"),
+                LocalDateTime.of(2026, 1, 10, 11, 0),
+                conta2,
+                conta
+        );
+
+        Transacao depositoConta2 = new Transacao(
+                UUID.randomUUID(),
+                TIPO.DEPOSITO,
+                new BigDecimal("300.00"),
+                LocalDateTime.of(2026, 1, 10, 12, 0),
+                conta2
+        );
+
+        Transacao enviadaPorConta1 = new Transacao(
+                UUID.randomUUID(),
+                TIPO.TRANSFERENCIA,
+                new BigDecimal("400.00"),
+                LocalDateTime.of(2026, 1, 10, 13, 0),
+                conta,
+                conta2
+        );
+        transacaoRepository.saveAllAndFlush(List.of(
+                depositoConta1,
+                recebidaPorConta1,
+                depositoConta2,
+                enviadaPorConta1
+        ));
+
+        List<Transacao> resultado = transacaoRepository
+                .buscarPorContaOrdenadoPorData(1);
+
+        List<UUID> idsEncontrados = resultado.stream()
+                .map(Transacao::getId)
+                .toList();
+
+        assertEquals(List.of(
+                enviadaPorConta1.getId(),
+                recebidaPorConta1.getId(),
+                depositoConta1.getId()
+        ), idsEncontrados);
     }
 
 }

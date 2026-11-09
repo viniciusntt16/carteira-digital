@@ -7,7 +7,6 @@ import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoRepository;
-import org.example.servicos.ContaService;
 import org.example.servicos.RelatorioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,14 +17,12 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.mockito.Mockito.*;
 
 public class RelatorioComDadosTest {
     private ContaRepository contaRepository;
     private TransacaoRepository transacaoRepository;
     private RelatorioService relatorioService;
-    private ContaService contaService;
     private Cliente c1;
     private Cliente c2;
     private Conta conta;
@@ -36,7 +33,6 @@ public class RelatorioComDadosTest {
     void preparar() {
         contaRepository = mock(ContaRepository.class);
         transacaoRepository = mock(TransacaoRepository.class);
-        contaService = new ContaService(contaRepository, transacaoRepository);
         c1 = new Cliente(UUID.randomUUID(), "Vinicius",
                 new CPF("12345678910"));
         c2 = new Cliente(UUID.randomUUID(), "Peres",
