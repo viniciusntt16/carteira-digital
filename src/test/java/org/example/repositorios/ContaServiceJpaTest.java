@@ -3,7 +3,9 @@ package org.example.repositorios;
 import org.example.entidades.Transacao;
 import org.example.objetos.TIPO;
 import org.junit.jupiter.api.AfterEach;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.example.entidades.Cliente;
@@ -12,20 +14,26 @@ import org.example.objetos.CPF;
 import org.example.servicos.ContaService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.context.annotation.Import;
-import static org.mockito.ArgumentMatchers.any;
+
 
 import java.math.BigDecimal;
+import java.time.Clock;
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.verify;
 
 @DataJpaTest(showSql = false)
-@Import(ContaService.class)
+@Import({
+        ContaService.class,
+        ContaServiceJpaTest.ConfiguracaoClockDeTeste.class
+})
+
+
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 public class ContaServiceJpaTest {
     @Autowired
@@ -201,5 +209,17 @@ public class ContaServiceJpaTest {
                 depositoConta1.getId()
         ), idsEncontrados);
     }
+    @TestConfiguration(proxyBeanMethods = false)
+    static class ConfiguracaoClockDeTeste {
+
+        @Bean
+        Clock clock() {
+            return Clock.fixed(
+                    Instant.parse("2026-01-10T14:30:00Z"),
+                    ZoneOffset.UTC
+            );
+        }
+    }
+
 
 }
