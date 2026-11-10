@@ -97,18 +97,16 @@ public class RelatorioVazioTest {
 
     @Test
     void contasSemMovimento(){
-        when(contaRepository.findAll())
-                .thenReturn(List.of());
-
-        when(transacaoRepository.findAll())
+        when(contaRepository.buscarContasSemMovimentacao())
                 .thenReturn(List.of());
 
         List<Conta> contas = relatorioService.contasSemMovimentacao();
 
         assertTrue(contas.isEmpty());
 
-        verify(contaRepository).findAll();
-        verify(transacaoRepository).findAll();
+        verify(contaRepository).buscarContasSemMovimentacao();
+        verify(transacaoRepository, never()).findAll();
+        verify(contaRepository, never()).findAll();
     }
 
     @Test

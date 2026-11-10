@@ -2,19 +2,15 @@ package test;
 
 import org.example.entidades.Cliente;
 import org.example.entidades.Conta;
-import org.example.entidades.Transacao;
 import org.example.objetos.CPF;
-import org.example.objetos.TIPO;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoRepository;
-import org.example.servicos.ContaService;
 import org.example.servicos.RelatorioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -25,7 +21,6 @@ public class RelatorioComDadosContinuacaoTest {
     private ContaRepository contaRepository;
     private TransacaoRepository transacaoRepository;
     private RelatorioService relatorioService;
-    private ContaService contaService;
     private Cliente c1;
     private Cliente c2;
     private Conta conta;
@@ -36,7 +31,6 @@ public class RelatorioComDadosContinuacaoTest {
     void preparar() {
         contaRepository = mock(ContaRepository.class);
         transacaoRepository = mock(TransacaoRepository.class);
-        contaService = new ContaService(contaRepository, transacaoRepository);
         c1 = new Cliente(UUID.randomUUID(), "Vinicius",
                 new CPF("12345678910"));
         c2 = new Cliente(UUID.randomUUID(), "Peres",
@@ -56,45 +50,11 @@ public class RelatorioComDadosContinuacaoTest {
         when(contaRepository.findById(2)).thenReturn(Optional.of(conta2));
         when(contaRepository.findById(3)).thenReturn(Optional.of(conta3));
 
-        Transacao depositoInicial = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO,
-                new BigDecimal("1000.00"),
-                LocalDateTime.of(2026, 1, 10, 10, 0),
-                conta
-        );
-
-        Transacao transferencia = new Transacao(UUID.randomUUID(), TIPO.TRANSFERENCIA,
-                new BigDecimal("500.00"),
-                LocalDateTime.of(2026, 1, 10, 11, 0),
-                conta2, conta
-        );
-
-        Transacao depositoConta1 = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO,
-                new BigDecimal("500.00"),
-                LocalDateTime.of(2026, 1, 10, 12, 0),
-                conta
-        );
-
-        Transacao saque = new Transacao(UUID.randomUUID(), TIPO.SAQUE,
-                new BigDecimal("500.00"),
-                LocalDateTime.of(2026, 1, 10, 13, 0),
-                conta
-        );
-
-        Transacao depositoConta2 = new Transacao(UUID.randomUUID(), TIPO.DEPOSITO,
-                new BigDecimal("100.00"),
-                LocalDateTime.of(2026, 1, 10, 14, 0),
-                conta2
-        );
-
-        List<Transacao> transacoes = List.of(
-                depositoInicial, transferencia, depositoConta1, saque, depositoConta2
-        );
-
-        when(transacaoRepository.findAll())
-                .thenReturn(transacoes);
-
         when(contaRepository.findAll())
                 .thenReturn(List.of(conta, conta2, conta3));
+
+        when(contaRepository.buscarContasSemMovimentacao())
+                .thenReturn(List.of(conta3));
 
         relatorioService = new RelatorioService(
                 contaRepository,
@@ -115,8 +75,9 @@ public class RelatorioComDadosContinuacaoTest {
         assertEquals(1, contas.size());
         assertSame(conta3, contas.get(0));
 
-        verify(contaRepository).findAll();
-        verify(transacaoRepository).findAll();
+        verify(contaRepository).buscarContasSemMovimentacao();
+        verify(contaRepository, never()).findAll();
+        verify(transacaoRepository, never()).findAll();
     }
 
     @Test

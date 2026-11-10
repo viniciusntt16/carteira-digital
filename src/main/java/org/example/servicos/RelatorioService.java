@@ -45,14 +45,7 @@ public class RelatorioService {
     }
 
     public List<Conta> contasSemMovimentacao(){
-        List<Transacao> transacoes = transacaoRepository.findAll();
-        return contaRepository.findAll()
-                .stream()
-                .filter(conta ->
-                        transacoes.stream().noneMatch(transacao ->
-                                conta.equals(transacao.getContaOrigem())
-                                        || conta.equals(transacao.getContaDestino())))
-                .toList();
+        return contaRepository.buscarContasSemMovimentacao();
     }
 
     public Map<Cliente, BigDecimal> saldoTotalPorCliente() {

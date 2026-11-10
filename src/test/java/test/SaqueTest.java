@@ -15,6 +15,9 @@ import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,7 +35,17 @@ public class SaqueTest {
     void preparar(){
         contaRepository = mock(ContaRepository.class);
         transacaoRepository = mock(TransacaoRepository.class);
-        contaService = new ContaService(contaRepository, transacaoRepository);
+        Clock clockFixo = Clock.fixed(
+                Instant.parse("2026-01-10T14:30:00Z"),
+                ZoneOffset.UTC
+        );
+
+        contaService = new ContaService(
+                contaRepository,
+                transacaoRepository,
+                clockFixo
+        );
+
         cliente = new Cliente(UUID.randomUUID(), "Vinicius",
                 new CPF("12345678910"));
         conta = new Conta(1, cliente, BigDecimal.valueOf(1000));
@@ -55,8 +68,6 @@ public class SaqueTest {
 
     @Test
     void saqueValorIncorreto(){
-        contaService.depositar(1, BigDecimal.valueOf(500));
-
         assertThrows(IllegalArgumentException.class,
                 ()->contaService.sacar(1, BigDecimal.valueOf(0)));
         assertThrows(IllegalArgumentException.class,
