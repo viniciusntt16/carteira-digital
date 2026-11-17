@@ -42,6 +42,7 @@ Contém as interfaces dos repositórios JPA, que estendem JpaRepository e fornec
 - `TransacaoRepository`: responsável por salvar, buscar e listar transações.
 
 Os testes utilizam mocks ou um banco H2 em memória, dependendo do cenário testado.
+
 ### `servicos`
 
 Contém os serviços que implementam as regras de negócio da aplicação.
