@@ -2,6 +2,7 @@ package org.example.servicos;
 
 import org.example.entidades.Cliente;
 import org.example.exceptions.ClienteDuplicadoException;
+import org.example.objetos.CPF;
 import org.example.repositorios.ClienteRepository;
 import org.springframework.stereotype.Service;
 
@@ -32,4 +33,14 @@ public class ClienteService {
     public List<Cliente> lista(){
         return clienteRepository.findAll();
     }
+
+    public Cliente criar(String nome, String cpf) {
+        Cliente cliente = new Cliente(
+                UUID.randomUUID(),
+                nome,
+                new CPF(cpf)
+        );
+        return salvar(cliente);
+    }
+
 }
