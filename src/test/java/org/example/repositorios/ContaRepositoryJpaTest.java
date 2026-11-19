@@ -2,13 +2,17 @@ package org.example.repositorios;
 
 import org.example.entidades.Cliente;
 import org.example.entidades.Conta;
+import org.example.entidades.Transacao;
 import org.example.objetos.CPF;
+import org.example.objetos.TIPO;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +25,9 @@ class ContaRepositoryJpaTest {
 
     @Autowired
     private ContaRepository contaRepository;
+
+    @Autowired
+    private  TransacaoRepository transacaoRepository;
 
     @Test
     void deveSalvarEBuscarConta() {
@@ -58,6 +65,34 @@ class ContaRepositoryJpaTest {
     @Test
     void deveRetornarListaVaziaQuandoNaoExistiremContas() {
         assertTrue(contaRepository.findAll().isEmpty());
+    }
+
+    @Test
+    void deveRetornarSomenteContaSemMovimento(){
+        Cliente cliente = new Cliente(
+                UUID.randomUUID(),
+                "Vinicius",
+                new CPF("12345678910")
+        );
+
+        clienteRepository.saveAndFlush(cliente);
+
+        Conta conta = new Conta(1, cliente, BigDecimal.valueOf(1000));
+        Conta conta2 = new Conta(2, cliente, BigDecimal.valueOf(500));
+
+        contaRepository.saveAndFlush(conta);
+        contaRepository.saveAndFlush(conta2);
+
+        Transacao transacao = new Transacao(UUID.randomUUID(),
+                TIPO.DEPOSITO, BigDecimal.valueOf(1000),
+                LocalDateTime.of(2026, 1, 10, 11, 0),
+                conta);
+        transacaoRepository.saveAndFlush(transacao);
+
+        List<Conta> resultado = contaRepository.buscarContasSemMovimentacao();
+
+        assertEquals(1, resultado.size());
+        assertEquals(2, resultado.get(0).getNumero());
     }
 
 }

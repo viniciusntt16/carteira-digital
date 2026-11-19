@@ -14,6 +14,9 @@ import org.mockito.ArgumentCaptor;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,15 +30,21 @@ public class DepositoTest {
     private TransacaoRepository transacaoRepository;
     private ContaService contaService;
     private Conta conta;
+    private Clock clockFixo;
 
     @BeforeEach
     void preparar() {
         contaRepository = mock(ContaRepository.class);
         transacaoRepository = mock(TransacaoRepository.class);
+        clockFixo = Clock.fixed(
+                Instant.parse("2026-01-10T14:30:00Z"),
+                ZoneOffset.UTC
+        );
 
         contaService = new ContaService(
                 contaRepository,
-                transacaoRepository
+                transacaoRepository,
+                clockFixo
         );
 
         Cliente cliente = new Cliente(
