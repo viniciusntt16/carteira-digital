@@ -28,7 +28,7 @@ public class DuasCasasDecimaisTest {
     }
 
     @Test
-    void duasCasasDecimaisdebito(){
+    void duasCasasDecimaisDebito(){
         assertThrows(IllegalArgumentException.class,
                 ()->conta.debitar(BigDecimal.valueOf(20.505)));
         assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_EVEN),
@@ -36,7 +36,7 @@ public class DuasCasasDecimaisTest {
     }
 
     @Test
-    void duasCasasDecimaiscredito(){
+    void duasCasasDecimaisCredito(){
         assertThrows(IllegalArgumentException.class,
                 ()->conta.creditar(BigDecimal.valueOf(20.505)));
         assertEquals(BigDecimal.valueOf(500).setScale(2, RoundingMode.HALF_EVEN),

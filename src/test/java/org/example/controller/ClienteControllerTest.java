@@ -1,6 +1,5 @@
-package org.example.repositorios;
+package org.example.controller;
 
-import org.example.controller.ClienteController;
 import org.example.entidades.Cliente;
 import org.example.objetos.CPF;
 import org.example.servicos.ClienteService;
@@ -105,6 +104,22 @@ class ClienteControllerTest {
                     "cpf": "52998224725"
                 }
                 """.formatted("A".repeat(256));
+
+        mockMvc.perform(post("/clientes")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest());
+
+        verifyNoInteractions(clienteService);
+    }
+
+    @Test
+    void deveRetornar400QuandoEstaFaltandoCampo() throws Exception {
+        String json = """
+                {
+                    "nome": "Vinicius"
+                }
+                """;
 
         mockMvc.perform(post("/clientes")
                         .contentType(MediaType.APPLICATION_JSON)
