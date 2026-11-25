@@ -5,9 +5,11 @@ import org.example.entidades.Conta;
 import org.example.entidades.Transacao;
 import org.example.exceptions.SaldoInsuficienteException;
 import org.example.objetos.CPF;
+import org.example.repositorios.ClienteRepository;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.ContaService;
+import org.example.servicos.RelatorioService;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -27,6 +29,8 @@ public class SaqueExceptionTest {
     void saqueException(){
         ContaRepository contaRepository = mock(ContaRepository.class);
         TransacaoRepository transacaoRepository = mock(TransacaoRepository.class);
+        ClienteRepository clienteRepository = mock(ClienteRepository.class);
+        RelatorioService relatorioService = mock(RelatorioService.class);
         Clock clockFixo = Clock.fixed(
                 Instant.parse("2026-01-10T14:30:00Z"),
                 ZoneOffset.UTC
@@ -35,6 +39,8 @@ public class SaqueExceptionTest {
         ContaService contaService = new ContaService(
                 contaRepository,
                 transacaoRepository,
+                clienteRepository,
+                relatorioService,
                 clockFixo
         );
         Cliente cliente = new Cliente(UUID.randomUUID(), "Vinicius",

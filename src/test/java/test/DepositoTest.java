@@ -5,9 +5,11 @@ import org.example.entidades.Conta;
 import org.example.entidades.Transacao;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
+import org.example.repositorios.ClienteRepository;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.ContaService;
+import org.example.servicos.RelatorioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -30,6 +32,8 @@ public class DepositoTest {
     private TransacaoRepository transacaoRepository;
     private ContaService contaService;
     private Conta conta;
+    ClienteRepository clienteRepository = mock(ClienteRepository.class);
+    RelatorioService relatorioService = mock(RelatorioService.class);
     private Clock clockFixo;
 
     @BeforeEach
@@ -44,6 +48,8 @@ public class DepositoTest {
         contaService = new ContaService(
                 contaRepository,
                 transacaoRepository,
+                clienteRepository,
+                relatorioService,
                 clockFixo
         );
 

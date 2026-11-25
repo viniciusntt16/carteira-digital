@@ -6,9 +6,11 @@ import org.example.entidades.Transacao;
 import org.example.exceptions.SaldoInsuficienteException;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
+import org.example.repositorios.ClienteRepository;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.ContaService;
+import org.example.servicos.RelatorioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -28,6 +30,8 @@ import static org.mockito.Mockito.*;
 public class SaqueTest {
     private ContaRepository contaRepository;
     private TransacaoRepository transacaoRepository;
+    private ClienteRepository clienteRepository;
+    private RelatorioService relatorioService;
     private ContaService contaService;
     private Cliente cliente;
     private Conta conta;
@@ -35,6 +39,8 @@ public class SaqueTest {
     void preparar(){
         contaRepository = mock(ContaRepository.class);
         transacaoRepository = mock(TransacaoRepository.class);
+        clienteRepository = mock(ClienteRepository.class);
+        relatorioService = mock(RelatorioService.class);
         Clock clockFixo = Clock.fixed(
                 Instant.parse("2026-01-10T14:30:00Z"),
                 ZoneOffset.UTC
@@ -43,6 +49,8 @@ public class SaqueTest {
         contaService = new ContaService(
                 contaRepository,
                 transacaoRepository,
+                clienteRepository,
+                relatorioService,
                 clockFixo
         );
 
