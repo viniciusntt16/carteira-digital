@@ -7,6 +7,7 @@ import org.example.exceptions.ContaNaoEncontradaException;
 import org.example.objetos.TIPO;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoRepository;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Comparator;
@@ -15,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Service
 public class RelatorioService {
     private final ContaRepository contaRepository;
     private final TransacaoRepository transacaoRepository;

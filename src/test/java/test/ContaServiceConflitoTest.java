@@ -5,9 +5,11 @@ import org.example.entidades.Conta;
 import org.example.entidades.Transacao;
 import org.example.exceptions.ConflitoContaException;
 import org.example.objetos.CPF;
+import org.example.repositorios.ClienteRepository;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.ContaService;
+import org.example.servicos.RelatorioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -23,6 +25,8 @@ import static org.mockito.Mockito.*;
 public class ContaServiceConflitoTest {
     private ContaRepository contaRepository;
     private TransacaoRepository transacaoRepository;
+    private ClienteRepository clienteRepository;
+    private RelatorioService relatorioService;
     private ContaService contaService;
     private Cliente cliente;
     private Conta conta;
@@ -31,10 +35,14 @@ public class ContaServiceConflitoTest {
     void preparar() {
         contaRepository = mock(ContaRepository.class);
         transacaoRepository = mock(TransacaoRepository.class);
+        clienteRepository = mock(ClienteRepository.class);
+        relatorioService = mock(RelatorioService.class);
 
         contaService = new ContaService(
                 contaRepository,
                 transacaoRepository,
+                clienteRepository,
+                relatorioService,
                 Clock.systemUTC()
         );
 

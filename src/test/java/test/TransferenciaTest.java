@@ -7,9 +7,11 @@ import org.example.exceptions.ContaNaoEncontradaException;
 import org.example.exceptions.SaldoInsuficienteException;
 import org.example.objetos.CPF;
 import org.example.objetos.TIPO;
+import org.example.repositorios.ClienteRepository;
 import org.example.repositorios.ContaRepository;
 import org.example.repositorios.TransacaoRepository;
 import org.example.servicos.ContaService;
+import org.example.servicos.RelatorioService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -39,6 +41,8 @@ public class TransferenciaTest {
     void preparar(){
         contaRepository = mock(ContaRepository.class);
         transacaoRepository = mock(TransacaoRepository.class);
+        ClienteRepository clienteRepository = mock(ClienteRepository.class);
+        RelatorioService relatorioService = mock(RelatorioService.class);
         Clock clockFixo = Clock.fixed(
                 Instant.parse("2026-01-10T14:30:00Z"),
                 ZoneOffset.UTC
@@ -47,6 +51,8 @@ public class TransferenciaTest {
         contaService = new ContaService(
                 contaRepository,
                 transacaoRepository,
+                clienteRepository,
+                relatorioService,
                 clockFixo
         );
         c1 = new Cliente(UUID.randomUUID(), "Vinicius",
